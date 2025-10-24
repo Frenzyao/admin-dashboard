@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/App.js
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
-  LineChart, Line, PieChart, Pie, Cell
+  LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer
 } from "recharts";
 
 function App() {
@@ -15,19 +16,18 @@ function App() {
   const API_URL = process.env.REACT_APP_API_URL; // Use environment variable here
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-  // Fix: wrap fetchData in useCallback so useEffect dependency is satisfied
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     try {
       const res = await axios.get(API_URL);
       setData(res.data);
     } catch (err) {
       console.error(err);
     }
-  }, [API_URL]);
+  };
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]); // Now ESLint is happy
+  }, []);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -74,9 +74,9 @@ function App() {
     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
     padding: "20px",
     margin: "10px",
+    flex: "1 1 250px",
     minWidth: "250px",
-    flex: 1,
-    textAlign: "center"
+    textAlign: "center",
   };
 
   return (
@@ -84,15 +84,15 @@ function App() {
       <h1 style={{ textAlign: "center", marginBottom: "30px" }}>Admin Dashboard</h1>
 
       {/* Tabs */}
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
-        <button onClick={() => setTab("reports")} style={{ margin: "0 10px", padding: "10px 20px", background: tab === "reports" ? "#0088FE" : "#ccc", color: "#fff", border: "none", borderRadius: "5px" }}>Reports</button>
-        <button onClick={() => setTab("settings")} style={{ margin: "0 10px", padding: "10px 20px", background: tab === "settings" ? "#00C49F" : "#ccc", color: "#fff", border: "none", borderRadius: "5px" }}>Settings</button>
+      <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", marginBottom: "30px" }}>
+        <button onClick={() => setTab("reports")} style={{ margin: "5px", padding: "10px 20px", background: tab === "reports" ? "#0088FE" : "#ccc", color: "#fff", border: "none", borderRadius: "5px" }}>Reports</button>
+        <button onClick={() => setTab("settings")} style={{ margin: "5px", padding: "10px 20px", background: tab === "settings" ? "#00C49F" : "#ccc", color: "#fff", border: "none", borderRadius: "5px" }}>Settings</button>
       </div>
 
       {tab === "reports" && (
         <div>
           {/* Top Stats */}
-          <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
             <div style={cardStyle}>
               <h3>Total Categories</h3>
               <p style={{ fontSize: "28px", fontWeight: "bold", color: "#0088FE" }}>{data.length}</p>
@@ -104,46 +104,52 @@ function App() {
           </div>
 
           {/* Charts */}
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", marginTop: "40px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", marginTop: "40px" }}>
             <div style={cardStyle}>
               <h3>Bar Chart</h3>
-              <BarChart width={400} height={300} data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#8884d8" />
-              </BarChart>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="category" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
             <div style={cardStyle}>
               <h3>Line Chart</h3>
-              <LineChart width={400} height={300} data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="value" stroke="#82ca9d" strokeWidth={3} />
-              </LineChart>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="category" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="value" stroke="#82ca9d" strokeWidth={3} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
 
             <div style={cardStyle}>
               <h3>Pie Chart</h3>
-              <PieChart width={400} height={300}>
-                <Pie data={data} dataKey="value" nameKey="category" cx="50%" cy="50%" outerRadius={80} label>
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={data} dataKey="value" nameKey="category" cx="50%" cy="50%" outerRadius={80} label>
+                    {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
           {/* Data Table */}
-          <div style={{ marginTop: "50px" }}>
+          <div style={{ marginTop: "50px", overflowX: "auto" }}>
             <h3>Raw Data Table</h3>
             <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: "10px", overflow: "hidden" }}>
               <thead style={{ background: "#f0f0f0" }}>
