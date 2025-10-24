@@ -14,7 +14,8 @@ function App() {
   const [form, setForm] = useState({ category: "", value: "" });
 
   // Use environment variable
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = "https://admin-dashboard-l60h.onrender.com/api/data";
+
 
 
 
