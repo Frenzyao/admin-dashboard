@@ -1,5 +1,6 @@
 // src/App.js
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
@@ -14,19 +15,19 @@ function App() {
   const API_URL = process.env.REACT_APP_API_URL; // Use environment variable here
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-  // Fetch data from backend
-  const fetchData = async () => {
+  // Fix: wrap fetchData in useCallback so useEffect dependency is satisfied
+  const fetchData = useCallback(async () => {
     try {
       const res = await axios.get(API_URL);
       setData(res.data);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [API_URL]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]); // Now ESLint is happy
 
   const handleAdd = async (e) => {
     e.preventDefault();
