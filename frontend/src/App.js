@@ -20,6 +20,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 
 
+
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   // Fetch data from backend
