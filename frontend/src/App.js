@@ -13,9 +13,16 @@ function App() {
   const [data, setData] = useState([]);
   const [form, setForm] = useState({ category: "", value: "" });
 
-  const API_URL = process.env.REACT_APP_API_URL; // Use environment variable here
+  // Use environment variable
+const API_URL = process.env.REACT_APP_API_URL;
+
+
+
+
+
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
+  // Fetch data from backend
   const fetchData = async () => {
     try {
       const res = await axios.get(API_URL);
